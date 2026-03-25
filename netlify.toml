@@ -1,0 +1,15 @@
+[build]
+  publish   = "public"
+  functions = "netlify/functions"
+
+[[redirects]]
+  from  = "/api/report"
+  to    = "/.netlify/functions/report"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from  = "/api/stats"
+  to    = "/.netlify/functions/stats"
+  status = 200
+  force  = true

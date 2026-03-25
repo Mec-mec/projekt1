@@ -82,7 +82,7 @@ function toCategory(count, radiusKm) {
  * Body: { latitude, longitude, fejfajas, faradsag }
  * Returns: stats about similar nearby users.
  */
-app.post('/api/report', (req, res) => {
+app.post('/api/report', async (req, res) => {
   const { latitude, longitude, fejfajas, faradsag } = req.body;
 
   // Validate
@@ -97,29 +97,34 @@ app.post('/api/report', (req, res) => {
     return res.status(400).json({ error: 'Érvénytelen adatok.' });
   }
 
-  // Persist entry
-  db.insert({ timestamp: Date.now(), latitude, longitude, fejfajas, faradsag });
+  try {
+    // Persist entry
+    await db.insert({ timestamp: Date.now(), latitude, longitude, fejfajas, faradsag });
 
-  // Load recent entries (includes the one just inserted)
-  const recent = db.getRecent();
+    // Load recent entries (includes the one just inserted)
+    const recent = await db.getRecent();
 
-  // Query with base radius; expand if too few results
-  let count  = countSimilar(recent, latitude, longitude, fejfajas, faradsag, RADIUS_BASE_KM);
-  let radius = RADIUS_BASE_KM;
+    // Query with base radius; expand if too few results
+    let count  = countSimilar(recent, latitude, longitude, fejfajas, faradsag, RADIUS_BASE_KM);
+    let radius = RADIUS_BASE_KM;
 
-  // Exclude the just-inserted entry from the count (it counts itself)
-  count = Math.max(0, count - 1);
+    // Exclude the just-inserted entry from the count (it counts itself)
+    count = Math.max(0, count - 1);
 
-  if (count < MIN_RESULTS_THRESHOLD) {
-    const expandedCount = countSimilar(recent, latitude, longitude, fejfajas, faradsag, RADIUS_EXPAND_KM);
-    const adjusted      = Math.max(0, expandedCount - 1);
-    if (adjusted > count) {
-      count  = adjusted;
-      radius = RADIUS_EXPAND_KM;
+    if (count < MIN_RESULTS_THRESHOLD) {
+      const expandedCount = countSimilar(recent, latitude, longitude, fejfajas, faradsag, RADIUS_EXPAND_KM);
+      const adjusted      = Math.max(0, expandedCount - 1);
+      if (adjusted > count) {
+        count  = adjusted;
+        radius = RADIUS_EXPAND_KM;
+      }
     }
-  }
 
-  return res.json(toCategory(count, radius));
+    return res.json(toCategory(count, radius));
+  } catch (err) {
+    console.error('POST /api/report hiba:', err);
+    return res.status(500).json({ error: 'Szerverhiba.' });
+  }
 });
 
 /**
@@ -127,7 +132,7 @@ app.post('/api/report', (req, res) => {
  * Query: lat, lon, fejfajas, faradsag
  * Non-persistent lookup (read-only, for future use).
  */
-app.get('/api/stats', (req, res) => {
+app.get('/api/stats', async (req, res) => {
   const lat      = parseFloat(req.query.lat);
   const lon      = parseFloat(req.query.lon);
   const fejfajas = parseInt(req.query.fejfajas, 10);
@@ -142,16 +147,21 @@ app.get('/api/stats', (req, res) => {
     return res.status(400).json({ error: 'Érvénytelen paraméterek.' });
   }
 
-  const recent  = db.getRecent();
-  let count  = countSimilar(recent, lat, lon, fejfajas, faradsag, RADIUS_BASE_KM);
-  let radius = RADIUS_BASE_KM;
+  try {
+    const recent = await db.getRecent();
+    let count  = countSimilar(recent, lat, lon, fejfajas, faradsag, RADIUS_BASE_KM);
+    let radius = RADIUS_BASE_KM;
 
-  if (count < MIN_RESULTS_THRESHOLD) {
-    const expanded = countSimilar(recent, lat, lon, fejfajas, faradsag, RADIUS_EXPAND_KM);
-    if (expanded > count) { count = expanded; radius = RADIUS_EXPAND_KM; }
+    if (count < MIN_RESULTS_THRESHOLD) {
+      const expanded = countSimilar(recent, lat, lon, fejfajas, faradsag, RADIUS_EXPAND_KM);
+      if (expanded > count) { count = expanded; radius = RADIUS_EXPAND_KM; }
+    }
+
+    return res.json(toCategory(count, radius));
+  } catch (err) {
+    console.error('GET /api/stats hiba:', err);
+    return res.status(500).json({ error: 'Szerverhiba.' });
   }
-
-  return res.json(toCategory(count, radius));
 });
 
 // ── Start ─────────────────────────────────────────────────────────────────────

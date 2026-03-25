@@ -1,36 +1,40 @@
 'use strict';
 
 /**
- * Ultra-simple JSON-file store – no native modules required.
+ * Netlify Blobs store – replaces the local data.json file store.
  *
- * Schema: an array of entry objects persisted to data.json.
+ * Schema: a JSON array persisted under the key 'data' in the 'entries' store.
  * Each entry: { timestamp, latitude, longitude, fejfajas, faradsag }
  *
- * Old entries (> TIME_WINDOW_MS) are pruned on every write so the file
- * stays small indefinitely.
+ * Old entries (> TIME_WINDOW_MS) are pruned on every write.
+ * Requires: @netlify/blobs  (auto-configured in Netlify Functions & netlify dev)
  */
 
-const fs   = require('fs');
-const path = require('path');
+const { getStore }   = require('@netlify/blobs');
 
-const DATA_PATH      = path.join(__dirname, 'data.json');
-const TIME_WINDOW_MS = 3 * 60 * 60 * 1000; // 3 hours – keep in sync with server.js
+const TIME_WINDOW_MS = 3 * 60 * 60 * 1000; // 3 hours
+const BLOB_KEY       = 'data';
 
 // ── Internal helpers ──────────────────────────────────────────────────────────
 
-function load() {
+function store() {
+  return getStore('entries');
+}
+
+async function load() {
   try {
-    return JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'));
+    const raw = await store().get(BLOB_KEY);
+    if (raw === null) return [];
+    return JSON.parse(raw);
   } catch {
     return [];
   }
 }
 
-function save(entries) {
-  fs.writeFileSync(DATA_PATH, JSON.stringify(entries), 'utf8');
+async function save(entries) {
+  await store().set(BLOB_KEY, JSON.stringify(entries));
 }
 
-/** Remove entries older than TIME_WINDOW_MS */
 function prune(entries) {
   const cutoff = Date.now() - TIME_WINDOW_MS;
   return entries.filter((e) => e.timestamp >= cutoff);
@@ -38,20 +42,14 @@ function prune(entries) {
 
 // ── Public API ────────────────────────────────────────────────────────────────
 
-/**
- * Insert a new entry. Prunes stale entries on every write.
- */
-function insert(entry) {
-  const entries = prune(load());
+async function insert(entry) {
+  const entries = prune(await load());
   entries.push(entry);
-  save(entries);
+  await save(entries);
 }
 
-/**
- * Return all entries within the active time window.
- */
-function getRecent() {
-  return prune(load());
+async function getRecent() {
+  return prune(await load());
 }
 
 module.exports = { insert, getRecent };
