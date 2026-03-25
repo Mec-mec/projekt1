@@ -1,22 +1,22 @@
-/* ── Reset & base ─────────────────────────────────────────────────────────── */
+đđ/* ── Reset & base ─────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
   --purple:      #6C63FF;
   --purple-dark: #4B44CC;
-  --red:         #FF6B6B;
+  --red:         đđ#aa269f;
   --red-light:   #FFCDD2;
   --blue:        #43BCCD;
   --blue-light:  #B2EBF2;
   --green:       #5CDB95;
-  --orange:      #FFA552;
+  --orange:      đ#FFA552;
   --bg:          #F0EFFF;
-  --card-bg:     #FFFFFF;
+  --card-bg:     #FFFFFF;đđ
   --text:        #1A1A2E;
   --text-soft:   #6B6B8A;
   --radius:      20px;
   --shadow:      0 8px 32px rgba(108, 99, 255, 0.15);
-}
+}đ
 
 html { font-size: 16px; }
 
