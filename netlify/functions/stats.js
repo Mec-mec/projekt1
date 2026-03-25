@@ -48,7 +48,17 @@ exports.handler = async (event) => {
     };
   }
 
-  const recent = await db.getRecent();
+  let recent;
+  try {
+    recent = await db.getRecent();
+  } catch (err) {
+    console.error('DB error in stats:', err);
+    return {
+      statusCode: 500,
+      headers: CORS_HEADERS,
+      body: JSON.stringify({ error: 'Adatbázis hiba.' }),
+    };
+  }
   let count  = countSimilar(recent, lat, lon, fejfajas, faradsag, RADIUS_BASE_KM);
   let radius = RADIUS_BASE_KM;
 

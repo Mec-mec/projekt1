@@ -32,7 +32,12 @@ async function load() {
 }
 
 async function save(entries) {
-  await store().set(BLOB_KEY, JSON.stringify(entries));
+  try {
+    await store().set(BLOB_KEY, JSON.stringify(entries));
+  } catch (err) {
+    console.error('Blob save error:', err);
+    throw err;
+  }
 }
 
 function prune(entries) {

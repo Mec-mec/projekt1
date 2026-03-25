@@ -55,8 +55,18 @@ exports.handler = async (event) => {
     };
   }
 
-  await db.insert({ timestamp: Date.now(), latitude, longitude, fejfajas, faradsag });
-  const recent = await db.getRecent();
+  let recent;
+  try {
+    await db.insert({ timestamp: Date.now(), latitude, longitude, fejfajas, faradsag });
+    recent = await db.getRecent();
+  } catch (err) {
+    console.error('DB error in report:', err);
+    return {
+      statusCode: 500,
+      headers: CORS_HEADERS,
+      body: JSON.stringify({ error: 'Adatbázis hiba.' }),
+    };
+  }
 
   let count  = countSimilar(recent, latitude, longitude, fejfajas, faradsag, RADIUS_BASE_KM);
   let radius = RADIUS_BASE_KM;
