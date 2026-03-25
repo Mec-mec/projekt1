@@ -56,7 +56,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 500,
       headers: CORS_HEADERS,
-      body: JSON.stringify({ error: 'Adatbázis hiba.' }),
+      body: JSON.stringify({ error: 'Adatbázis hiba.', detail: err.message }),
     };
   }
   let count  = countSimilar(recent, lat, lon, fejfajas, faradsag, RADIUS_BASE_KM);

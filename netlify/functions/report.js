@@ -64,7 +64,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 500,
       headers: CORS_HEADERS,
-      body: JSON.stringify({ error: 'Adatbázis hiba.' }),
+      body: JSON.stringify({ error: 'Adatbázis hiba.', detail: err.message }),
     };
   }
 
