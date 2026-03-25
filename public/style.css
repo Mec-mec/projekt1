@@ -1,0 +1,312 @@
+/* ── Reset & base ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --purple:      #6C63FF;
+  --purple-dark: #4B44CC;
+  --red:         #FF6B6B;
+  --red-light:   #FFCDD2;
+  --blue:        #43BCCD;
+  --blue-light:  #B2EBF2;
+  --green:       #5CDB95;
+  --orange:      #FFA552;
+  --bg:          #F0EFFF;
+  --card-bg:     #FFFFFF;
+  --text:        #1A1A2E;
+  --text-soft:   #6B6B8A;
+  --radius:      20px;
+  --shadow:      0 8px 32px rgba(108, 99, 255, 0.15);
+}
+
+html { font-size: 16px; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: linear-gradient(160deg, #667eea 0%, #764ba2 100%);
+  min-height: 100dvh;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* ── App shell ───────────────────────────────────────────────────────────────*/
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100dvh;
+  padding: 1.5rem 1rem 2rem;
+  gap: 1rem;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.app__header {
+  text-align: center;
+  color: #fff;
+  padding-top: 0.5rem;
+}
+
+.app__title {
+  font-size: clamp(2rem, 8vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.app__title-dot { color: rgba(255,255,255,0.55); }
+
+.app__subtitle {
+  font-size: 1rem;
+  opacity: 0.85;
+  margin-top: 0.3rem;
+}
+
+/* ── Card ────────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.75rem 1.5rem;
+  width: 100%;
+  max-width: 480px;
+}
+
+/* ── Field ───────────────────────────────────────────────────────────────── */
+.field { margin-bottom: 1.75rem; }
+
+.field__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.65rem;
+}
+
+.field__label {
+  font-weight: 700;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.field__icon { font-size: 1.2rem; }
+
+.field__value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--purple);
+  min-width: 2ch;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.slider__labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--text-soft);
+  margin-top: 0.4rem;
+}
+
+/* ── Sliders ─────────────────────────────────────────────────────────────── */
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+/* Red (fejfájás) track */
+.slider--red {
+  background: linear-gradient(to right, var(--red-light) 0%, var(--red-light) 100%);
+}
+
+/* Blue (fáradtság) track */
+.slider--blue {
+  background: linear-gradient(to right, var(--blue-light) 0%, var(--blue-light) 100%);
+}
+
+/* Thumb – WebKit */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.slider--red::-webkit-slider-thumb  { background: var(--red); }
+.slider--blue::-webkit-slider-thumb { background: var(--blue); }
+.slider:active::-webkit-slider-thumb { transform: scale(1.15); }
+
+/* Thumb – Firefox */
+.slider::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  cursor: pointer;
+}
+.slider--red::-moz-range-thumb  { background: var(--red); }
+.slider--blue::-moz-range-thumb { background: var(--blue); }
+
+/* Track fill via CSS custom property (set by JS) */
+.slider--red  { background: linear-gradient(to right, var(--red)  0%, var(--red)  var(--fill, 50%), var(--red-light)  var(--fill, 50%), var(--red-light)  100%); }
+.slider--blue { background: linear-gradient(to right, var(--blue) 0%, var(--blue) var(--fill, 50%), var(--blue-light) var(--fill, 50%), var(--blue-light) 100%); }
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+  letter-spacing: 0.01em;
+}
+
+.btn--primary {
+  background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(108, 99, 255, 0.35);
+  margin-top: 0.5rem;
+}
+.btn--primary:hover  { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(108, 99, 255, 0.45); }
+.btn--primary:active { transform: translateY(0); }
+.btn--primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+.btn--ghost {
+  background: transparent;
+  color: var(--purple);
+  border: 2px solid var(--purple);
+  margin-top: 1.25rem;
+}
+.btn--ghost:hover  { background: var(--bg); }
+.btn--ghost:active { transform: scale(0.98); }
+
+.btn__icon { font-size: 1.1rem; }
+
+/* ── Status message ──────────────────────────────────────────────────────── */
+.status {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-soft);
+  min-height: 1.4em;
+  margin-top: 0.75rem;
+}
+.status--error { color: var(--red); }
+
+/* ── Result card ─────────────────────────────────────────────────────────── */
+.card--result {
+  text-align: center;
+  animation: fadeUp 0.4s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.result__icon {
+  font-size: 3.5rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.result__label {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 0.6rem;
+}
+
+.result__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+}
+
+.result__count strong {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--purple);
+  font-variant-numeric: tabular-nums;
+}
+
+.result__radius {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+/* ── Progress bar ────────────────────────────────────────────────────────── */
+.result__bar-wrap {
+  background: var(--bg);
+  border-radius: 999px;
+  height: 10px;
+  overflow: hidden;
+  margin-bottom: 0.25rem;
+}
+
+.result__bar {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(to right, var(--purple), var(--blue));
+  transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  width: 0%;
+}
+
+/* Level colour overrides */
+.result__bar--none     { background: var(--text-soft); }
+.result__bar--few      { background: linear-gradient(to right, var(--orange), var(--red)); }
+.result__bar--many     { background: linear-gradient(to right, var(--blue), var(--purple)); }
+.result__bar--very-many{ background: linear-gradient(to right, var(--purple), var(--green)); }
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.app__footer {
+  color: rgba(255,255,255,0.55);
+  font-size: 0.75rem;
+  text-align: center;
+  padding-bottom: 0.5rem;
+  max-width: 320px;
+}
+
+/* ── Spinner overlay ─────────────────────────────────────────────────────── */
+.spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Utility ─────────────────────────────────────────────────────────────── */
+[hidden] { display: none !important; }
+
+/* ── Desktop tweak ───────────────────────────────────────────────────────── */
+@media (min-width: 600px) {
+  .app { padding: 3rem 1rem 3rem; }
+  .card { padding: 2.25rem 2rem; }
+}

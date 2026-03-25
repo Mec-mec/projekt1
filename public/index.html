@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#6C63FF" />
+  <title>Fejfájás.hu</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app">
+
+    <!-- ── Header ── -->
+    <header class="app__header">
+      <h1 class="app__title">fejfájás<span class="app__title-dot">.hu</span></h1>
+      <p class="app__subtitle">Érzed mások is így?</p>
+    </header>
+
+    <!-- ── Main card ── -->
+    <main class="card" id="formCard">
+
+      <!-- Fejfájás -->
+      <div class="field">
+        <div class="field__top">
+          <label class="field__label" for="fejfajas">
+            <span class="field__icon">🤕</span> Fejfájás
+          </label>
+          <span class="field__value" id="fejfajasValue">5</span>
+        </div>
+        <input
+          class="slider slider--red"
+          type="range"
+          id="fejfajas"
+          min="0" max="10" step="1" value="5"
+          aria-label="Fejfájás mértéke 0-tól 10-ig"
+        />
+        <div class="slider__labels">
+          <span>Semmi</span>
+          <span>Elviselhetetlen</span>
+        </div>
+      </div>
+
+      <!-- Fáradtság -->
+      <div class="field">
+        <div class="field__top">
+          <label class="field__label" for="faradsag">
+            <span class="field__icon">😴</span> Fáradtság
+          </label>
+          <span class="field__value" id="faradsagValue">5</span>
+        </div>
+        <input
+          class="slider slider--blue"
+          type="range"
+          id="faradsag"
+          min="0" max="10" step="1" value="5"
+          aria-label="Fáradtság mértéke 0-tól 10-ig"
+        />
+        <div class="slider__labels">
+          <span>Semmi</span>
+          <span>Kimerült</span>
+        </div>
+      </div>
+
+      <!-- Submit button -->
+      <button class="btn btn--primary" id="submitBtn" type="button">
+        <span class="btn__text">Megnézem, mások is így érzik?</span>
+        <span class="btn__icon">→</span>
+      </button>
+
+      <!-- Status / error message -->
+      <p class="status" id="status" aria-live="polite"></p>
+
+    </main>
+
+    <!-- ── Result card (hidden until response) ── -->
+    <section class="card card--result" id="resultCard" hidden>
+
+      <div class="result__icon" id="resultIcon" aria-hidden="true">🔍</div>
+
+      <p class="result__label" id="resultLabel">…</p>
+
+      <div class="result__meta">
+        <span class="result__count">
+          <strong id="resultCount">0</strong> hasonló állapotú ember
+        </span>
+        <span class="result__radius" id="resultRadius"></span>
+      </div>
+
+      <div class="result__bar-wrap" aria-hidden="true">
+        <div class="result__bar" id="resultBar"></div>
+      </div>
+
+      <button class="btn btn--ghost" id="resetBtn" type="button">
+        ← Új jelentés küldése
+      </button>
+
+    </section>
+
+    <footer class="app__footer">
+      Az adatok névtelenül, az utolsó 3 órából kerülnek lekérdezésre.
+    </footer>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
