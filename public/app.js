@@ -147,8 +147,7 @@ submitBtn.addEventListener('click', () => {
 
 // ── Reset ─────────────────────────────────────────────────────────────────────
 resetBtn.addEventListener('click', () => {
-  resultCard.hidden = false;   // keep visible briefly during transition
-  formCard.hidden   = false;
   resultCard.hidden = true;
+  formCard.hidden   = false;
   setStatus('');
 });

@@ -6,6 +6,13 @@ const CORS_HEADERS = {
   'Content-Type':                 'application/json',
 };
 
+// Preflight headers must NOT include Content-Type (empty 204 body).
+const CORS_PREFLIGHT_HEADERS = {
+  'Access-Control-Allow-Origin':  '*',
+  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+};
+
 const db = require('../../db');
 const {
   validateReport,
@@ -19,11 +26,7 @@ const {
 exports.handler = async (event) => {
   // CORS preflight
   if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 204,
-      headers: { ...CORS_HEADERS, 'Access-Control-Allow-Methods': 'POST, OPTIONS' },
-      body: '',
-    };
+    return { statusCode: 204, headers: CORS_PREFLIGHT_HEADERS, body: '' };
   }
 
   if (event.httpMethod !== 'POST') {
@@ -34,9 +37,15 @@ exports.handler = async (event) => {
     };
   }
 
+  // Netlify may base64-encode the body for binary-safe transport.
+  let rawBody = event.body || '{}';
+  if (event.isBase64Encoded) {
+    rawBody = Buffer.from(rawBody, 'base64').toString('utf8');
+  }
+
   let body;
   try {
-    body = JSON.parse(event.body || '{}');
+    body = JSON.parse(rawBody);
   } catch {
     return {
       statusCode: 400,
@@ -64,7 +73,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 500,
       headers: CORS_HEADERS,
-      body: JSON.stringify({ error: 'Adatbázis hiba.', detail: err.message }),
+      body: JSON.stringify({ error: 'Adatbázis hiba.' }),
     };
   }
 

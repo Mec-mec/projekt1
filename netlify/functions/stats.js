@@ -6,6 +6,12 @@ const CORS_HEADERS = {
   'Content-Type':                 'application/json',
 };
 
+const CORS_PREFLIGHT_HEADERS = {
+  'Access-Control-Allow-Origin':  '*',
+  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+};
+
 const db = require('../../db');
 const {
   validateStats,
@@ -19,11 +25,7 @@ const {
 exports.handler = async (event) => {
   // CORS preflight
   if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 204,
-      headers: { ...CORS_HEADERS, 'Access-Control-Allow-Methods': 'GET, OPTIONS' },
-      body: '',
-    };
+    return { statusCode: 204, headers: CORS_PREFLIGHT_HEADERS, body: '' };
   }
 
   if (event.httpMethod !== 'GET') {
@@ -56,7 +58,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 500,
       headers: CORS_HEADERS,
-      body: JSON.stringify({ error: 'Adatbázis hiba.', detail: err.message }),
+      body: JSON.stringify({ error: 'Adatbázis hiba.' }),
     };
   }
   let count  = countSimilar(recent, lat, lon, fejfajas, faradsag, RADIUS_BASE_KM);

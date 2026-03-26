@@ -15,17 +15,28 @@
 const path = require('path');
 const fs   = require('fs');
 
+// Top-level require so Netlify's static bundler (nft/zisi) always
+// includes the package in the function bundle.
+let _netlifyBlobsGetStore = null;
+try {
+  _netlifyBlobsGetStore = require('@netlify/blobs').getStore;
+} catch {
+  // Package not available – will fall back to file store.
+}
+
 const TIME_WINDOW_MS = 3 * 60 * 60 * 1000; // 3 hours
 const BLOB_KEY       = 'data';
 const DATA_FILE      = path.join(__dirname, 'data.json');
 
-const IS_NETLIFY = !!(process.env.NETLIFY || process.env.NETLIFY_LOCAL);
+// NETLIFY is set in both build and function-invocation environments.
+// NETLIFY_LOCAL is set by `netlify dev`.
+const IS_NETLIFY = !!(process.env.NETLIFY || process.env.NETLIFY_LOCAL)
+                   && _netlifyBlobsGetStore !== null;
 
 // ── Blob helpers (Netlify only) ───────────────────────────────────────────────
 
 function blobStore() {
-  const { getStore } = require('@netlify/blobs');
-  return getStore('entries');
+  return _netlifyBlobsGetStore('entries');
 }
 
 async function blobLoad() {
@@ -43,21 +54,31 @@ async function blobSave(entries) {
 function fileLoad() {
   try {
     if (!fs.existsSync(DATA_FILE)) return [];
-    return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+    const raw = fs.readFileSync(DATA_FILE, 'utf8');
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
   }
 }
 
 function fileSave(entries) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(entries, null, 2), 'utf8');
+  try {
+    fs.writeFileSync(DATA_FILE, JSON.stringify(entries, null, 2), 'utf8');
+  } catch (err) {
+    console.error('File save error:', err);
+    throw err;
+  }
 }
 
 // ── Unified helpers ───────────────────────────────────────────────────────────
 
 async function load() {
   if (IS_NETLIFY) {
-    try { return await blobLoad(); } catch { return []; }
+    try { return await blobLoad(); } catch (err) {
+      console.error('Blob load error:', err);
+      return [];
+    }
   }
   return fileLoad();
 }
@@ -77,7 +98,7 @@ async function save(entries) {
 
 function prune(entries) {
   const cutoff = Date.now() - TIME_WINDOW_MS;
-  return entries.filter((e) => e.timestamp >= cutoff);
+  return entries.filter((e) => typeof e.timestamp === 'number' && e.timestamp >= cutoff);
 }
 
 // ── Public API ────────────────────────────────────────────────────────────────

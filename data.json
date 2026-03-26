@@ -1,1 +1,23 @@
-[{"timestamp":1774443824087,"latitude":47.55,"longitude":19.05,"fejfajas":5,"faradsag":5},{"timestamp":1774444077159,"latitude":47.55,"longitude":19.05,"fejfajas":5,"faradsag":5},{"timestamp":1774444090790,"latitude":47.55,"longitude":19.05,"fejfajas":5,"faradsag":5}]
+[
+  {
+    "timestamp": 1774513497983,
+    "latitude": 47.5,
+    "longitude": 19,
+    "fejfajas": 3,
+    "faradsag": 4
+  },
+  {
+    "timestamp": 1774513503513,
+    "latitude": 47.5,
+    "longitude": 19,
+    "fejfajas": 3,
+    "faradsag": 4
+  },
+  {
+    "timestamp": 1774513515441,
+    "latitude": 47.5,
+    "longitude": 19,
+    "fejfajas": 5,
+    "faradsag": 5
+  }
+]
