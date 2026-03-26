@@ -19,5 +19,19 @@
     "longitude": 19,
     "fejfajas": 5,
     "faradsag": 5
+  },
+  {
+    "timestamp": 1774513788828,
+    "latitude": 47.5,
+    "longitude": 19,
+    "fejfajas": 5,
+    "faradsag": 5
+  },
+  {
+    "timestamp": 1774513788830,
+    "latitude": 47.5,
+    "longitude": 19,
+    "fejfajas": 3,
+    "faradsag": 7
   }
 ]
